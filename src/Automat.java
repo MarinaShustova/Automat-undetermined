@@ -1,15 +1,13 @@
 import java.awt.*;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
 public class Automat {
-    private ArrayList<Step> steps = new ArrayList<>();
+//    private ArrayList<Step> steps = new ArrayList<>();
     private ArrayList<Integer> finalStates = new ArrayList<>();
-    int currentState = 0;
+//    int currentState = 0;
     private Map<Integer, Map<Character, List<Integer>>> transitions = new HashMap<>();
 
     public Automat(String path) throws FileNotFoundException {
@@ -34,43 +32,29 @@ public class Automat {
         scanner.close();
     }
 
-    public boolean isInLanguage(String path) throws IOException {
+    public boolean isInLanguage(String path) throws FileNotFoundException {
         Stack<Point> stack = new Stack<>();
         stack.push(new Point(0 , 0));
+
+        File file = new File(path);
+        Scanner scanner = new Scanner(file);
+        String s = scanner.nextLine();
 
         while (!stack.empty()) {
             Point point = stack.pop();
             int state = point.x;
             int pos = point.y;
 
-            List states = transitions.get(point.x).get(path.charAt(pos));
+            List states = transitions.get(point.x).get(s.charAt(pos));
             if (states != null) {
                 for (Object i : states) {
                     stack.push(new Point((Integer) i, pos + 1));
                 }
-                if (pos == path.length() - 1 && finalStates.contains(state)) {
+                if (pos == s.length() - 1 && finalStates.contains(state)) {
                     return true;
                 }
             }
         }
         return false;
-
-
-//        FileInputStream fileInputStream = new FileInputStream(path);
-//        int character;
-//        while ((character = fileInputStream.read()) != -1){
-//            for (Step s : steps){
-//                if ((s.from == currentState)&&(s.at.equals(String.valueOf((char)character)))){
-//                    currentState = s.to;
-//                    break;
-//                }
-//            }
-//        }
-//        for (Integer i : finalStates){
-//            if (i == currentState){
-//                return true;
-//            }
-//        }
-//        return false;
     }
 }
